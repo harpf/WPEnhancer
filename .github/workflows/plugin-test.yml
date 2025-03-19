@@ -13,7 +13,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        php: ["8.2","8.3","8.4"]  # Verschiedene PHP-Versionen testen
+        php: ["8.2","8.3","8.4"]
 
     steps:
       - name: 🛎 Checkout Repository

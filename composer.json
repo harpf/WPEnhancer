@@ -1,0 +1,19 @@
+{
+    "name": "harpf/WPEnhancer",
+    "description": "Ein WordPress-Plugin mit Tests",
+    "type": "wordpress-plugin",
+    "require": {
+      "php": ">=7.4"
+    },
+    "require-dev": {
+      "phpunit/phpunit": "^9.5",
+      "brain/monkey": "^2.6",
+      "wp-phpunit/wp-phpunit": "^6.0"
+    },
+    "autoload": {
+      "psr-4": {
+        "DeinPlugin\\": "src/"
+      }
+    }
+  }
+  
