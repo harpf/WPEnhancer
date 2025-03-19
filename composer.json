@@ -1,5 +1,5 @@
 {
-    "name": "harpf/WPEnhancer",
+    "name": "harpf/wpenhancer",
     "description": "Ein WordPress-Plugin mit Tests",
     "type": "wordpress-plugin",
     "require": {
