@@ -1,0 +1,42 @@
+name: WordPress Plugin Tests
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        php: ["8.2","8.3","8.4"]  # Verschiedene PHP-Versionen testen
+
+    steps:
+      - name: 🛎 Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: 🔧 Set up PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php }}
+          extensions: mbstring, intl
+          tools: composer
+
+      - name: 📦 Install Dependencies
+        run: composer install --no-interaction --prefer-dist
+
+      - name: 🛠 Set up WordPress test environment
+        run: |
+          curl -O https://raw.githubusercontent.com/wp-cli/core-skip/trunk/wp-cli.phar
+          chmod +x wp-cli.phar
+          mv wp-cli.phar /usr/local/bin/wp
+          wp core download --path=/tmp/wordpress
+          wp config create --dbname=wordpress_test --dbuser=root --dbpass=root --dbhost=127.0.0.1 --path=/tmp/wordpress
+          wp db create --path=/tmp/wordpress
+
+      - name: 🔍 Run PHPUnit Tests
+        run: vendor/bin/phpunit --configuration phpunit.xml
