@@ -1,8 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<phpunit bootstrap="tests/bootstrap.php">
+<phpunit
+    bootstrap="tests/bootstrap.php"
+    colors="true"
+    verbose="true"
+    stopOnFailure="false"
+>
     <testsuites>
         <testsuite name="Plugin Tests">
             <directory>tests/</directory>
         </testsuite>
     </testsuites>
+
+    <php>
+        <env name="WP_TESTS_DIR" value="/tmp/wordpress/wp-content/plugins/wpenhancer/tests/wordpress-tests-lib" />
+        <env name="WP_PLUGIN_DIR" value="/tmp/wordpress/wp-content/plugins/" />
+        <env name="WP_CORE_DIR" value="/tmp/wordpress" />
+        <env name="WP_DEBUG" value="1"/>
+    </php>
 </phpunit>
