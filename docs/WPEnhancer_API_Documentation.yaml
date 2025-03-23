@@ -1,0 +1,77 @@
+openapi: 3.0.0
+info:
+  title: WPEnhancer REST API
+  description: REST API für WPEnhancer – z. B. zur automatisierten Zuweisung von JurorIDs per Power Automate oder anderen Tools.
+  version: 1.0.0
+  contact:
+    name: Jonas Zauner
+    url: https://swissbarbecue.ch
+    email: info@swissbarbecue.ch
+servers:
+  - url: https://staging.swissbarbecue.ch/wp-json
+    description: Staging Umgebung
+  - url: https://www.swissbarbecue.ch/wp-json
+    description: Produktion
+
+paths:
+  /wpenhancer/v1/set-jurorid:
+    post:
+      summary: Juror ID zu einem Benutzer hinzufügen
+      description: Setzt die JurorID für einen bestehenden Benutzer anhand seiner E-Mail-Adresse.
+      operationId: setJurorId
+      tags:
+        - Juroren
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - email
+                - juror_id
+              properties:
+                email:
+                  type: string
+                  format: email
+                  example: max@example.com
+                juror_id:
+                  type: string
+                  example: JUROR-2025-XYZ
+      parameters:
+        - name: x-api-key
+          in: header
+          required: true
+          schema:
+            type: string
+          description: API-Key zur Authentifizierung
+      responses:
+        '200':
+          description: Juror ID erfolgreich gespeichert
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  user_id:
+                    type: integer
+                  juror_id:
+                    type: string
+        '400':
+          description: Ungültige Eingabe
+        '401':
+          description: Nicht autorisiert (API-Key fehlt oder ungültig)
+        '404':
+          description: Benutzer nicht gefunden
+
+components:
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      in: header
+      name: x-api-key
+
+security:
+  - ApiKeyAuth: []
