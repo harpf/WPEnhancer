@@ -1,41 +1,44 @@
 <?php
 /*
 Plugin Name: WPEnhancer Sample Plugin
-Plugin URI: https//swissbarbecue.ch
-Description: This is a sample Plugin to add additional functionality for WP Features
+Plugin URI: https://swissbarbecue.ch
+Description: Plugin für benutzerdefinierte Shortcodes, Snippets und API-Zugriffe in WordPress.
 Version: 1.0.0
 Author: Jonas Zauner
-Author URI: https//swissbarbecue.ch
+Author URI: https://swissbarbecue.ch
 */
-if(!defined('ABSPATH')):
-    die;
-endif;
 
-define ('WPEnhancer_Version','1.0.0');
-define('WPENHANCER_API_SECRET', 'k[uP]0;mD)v&8L+8lq@n}l]P8#S*4u');
+if (!defined('ABSPATH')) {
+    exit;
+}
 
+define('WPEnhancer_Version', '1.0.0');
 
-require_once plugin_dir_path(__FILE__).'includes/class-wpenhancer-init.php';
+// 👉 Alle benötigten Klassen laden
+require_once plugin_dir_path(__FILE__) . 'includes/class-wpenhancer-init.php';
+require_once plugin_dir_path(__FILE__) . 'includes/class-wpenhancer-core.php';
+require_once plugin_dir_path(__FILE__) . 'includes/class-wpenhancer-admin.php';
+require_once plugin_dir_path(__FILE__) . 'includes/class-wpenhancer-usermeta.php';
+require_once plugin_dir_path(__FILE__) . 'includes/class-wpenhancer-api.php';
 
+// 👉 Aktivierung / Deaktivierung
 function WPEnhancer_activate() {
     WPEnhancer_Init::activate();
 }
-
 function WPEnhancer_deactivate() {
     WPEnhancer_Init::deactivate();
 }
+register_activation_hook(__FILE__, 'WPEnhancer_activate');
+register_deactivation_hook(__FILE__, 'WPEnhancer_deactivate');
 
-register_activation_hook(__FILE__,'WPEnhancer_activate');
-register_deactivation_hook(__FILE__,'WPEnhancer_deactivate');
-
-function init(){
-    if(class_exists('WPEnhancer')) {
-        $WPEnhancer = new WPEnhancer();
-        $WPEnhancer->run();
+// 👉 Plugin initialisieren
+function WPEnhancer_init() {
+    if (class_exists('WPEnhancer_Core')) {
+        new WPEnhancer_Core();
     }
 }
+add_action('plugins_loaded', 'WPEnhancer_init');
 
-add_action('plugins_loaded', 'init');
 function WPEnhancer_Juryregistration() {
     if ( is_user_logged_in() ) {
         // Benutzer holen (Simple Membership oder normal)
@@ -81,22 +84,13 @@ function WPEnhancer_Juryregistration() {
 
 add_shortcode('Juryregistration', 'WPEnhancer_Juryregistration');
 
-add_action('init', function() {
-    if (!is_user_logged_in()) return;
-    if (!isset($_GET['showmeta'])) return;
-
-    $user_id = get_current_user_id();
-    $meta = get_user_meta($user_id);
-
+// 👉 Benutzer-Meta anzeigen (Debug-Zweck)
+add_action('init', function () {
+    if (!is_user_logged_in() || !isset($_GET['showmeta'])) return;
     echo '<pre>';
-    print_r($meta);
+    print_r(get_user_meta(get_current_user_id()));
     echo '</pre>';
     exit;
 });
 
-add_shortcode('juror_id', function($atts) {
-    return $this->shortcode_callback([
-        'field' => 'juror_id',
-        'label' => 'Deine Juror ID'
-    ]);
-});
+
